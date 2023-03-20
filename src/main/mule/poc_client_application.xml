@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="306896b5-5a9d-46a7-bcf3-e8959ed12498" >
+		<http:listener-connection host="0.0.0.0" port="18082" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="f080daa3-15de-42c7-bf2d-cfc5ab806923" >
+		<http:request-connection protocol="HTTPS" host="anypoint.mulesoft.com" port="443" >
+			<http:authentication >
+				<oauth:authorization-code-grant-type localCallbackUrl="http://localhost:18081/callback" externalCallbackUrl="http://localhost:18081/callback" localAuthorizationUrl="http://localhost:18081/login" authorizationUrl="https://anypoint.mulesoft.com/accounts/api/v2/oauth2/authorize" clientId="fe2bd21d510341878ba0d11c1b63d05a" clientSecret="37D24F91467E457aaAF76E00F88F4B01" scopes="full offline_access" tokenUrl="https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token" refreshTokenWhen="#[attributes.statusCode == 401]"/>
+			</http:authentication>
+		</http:request-connection>
+	</http:request-config>
+	<os:object-store name="Application_Object_store" doc:name="Object store" doc:id="3a013cf5-3ca9-4964-bfff-4fbb4f7d3e3e" />
+	<oauth:token-manager-config name="Token_manager_config" doc:name="Token manager config" doc:id="d0940474-9026-4247-8246-3a6549ca12b3" objectStore="Application_Object_store" />
+	<flow name="poc_client_applicationFlow1" doc:id="b60a61ec-e19a-432f-9d21-fc326236ba41" >
+		<http:listener doc:name="Listener" doc:id="598e498e-7367-46f3-b4ae-885f0ddb4700" config-ref="HTTP_Listener_config" path="/clients"/>
+		<http:request method="GET" doc:name="Request" doc:id="75f43224-a693-4e6c-9ab5-b5225fb65742" config-ref="HTTP_Request_configuration" path="/apiplatform/repository/v2/organizations/54c8038f-91fb-459b-893c-7168a1f8abec/applications">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"targetAdminSite" : "true"
+}]]]></http:query-params>
+		</http:request>
+	</flow>
+</mule>
