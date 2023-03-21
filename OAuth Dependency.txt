@@ -1,0 +1,6 @@
+<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-oauth-module</artifactId>
+			<version>1.1.19</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
